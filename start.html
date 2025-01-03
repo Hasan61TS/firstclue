@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Sunfall - Initialization</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000;
+            font-family: 'Courier New', monospace;
+            color: #0f0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .video-container {
+            width: 100%;
+            max-width: 800px;
+            position: relative;
+            margin: 2rem;
+        }
+
+        video {
+            width: 100%;
+            display: block;
+            filter: brightness(1.2) contrast(1.2);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.2) 0px,
+                rgba(0, 0, 0, 0.2) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            animation: scan 8s linear infinite;
+        }
+
+        .static {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyBAMAAADsEZWCAAAAGFBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANxg4bAAAACHRSTlMAAAAAAAAAAPxJJREAAAABJRU5ErkJggg==');
+            opacity: 0.05;
+            pointer-events: none;
+        }
+
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 0.5rem 1rem;
+            border: 1px solid #0f0;
+            z-index: 10;
+        }
+
+        .play-btn {
+            background: none;
+            border: 1px solid #0f0;
+            color: #0f0;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .play-btn:hover {
+            background: #0f0;
+            color: #000;
+        }
+
+        .progress-container {
+            flex-grow: 1;
+            height: 4px;
+            background: rgba(0, 255, 0, 0.2);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #0f0;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .time {
+            color: #0f0;
+            font-family: monospace;
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .continue-btn {
+            display: none;
+            position: fixed;
+            bottom: 40px;
+            padding: 1rem 2rem;
+            background: none;
+            border: 1px solid #0f0;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+
+        .continue-btn:hover {
+            background: #0f0;
+            color: #000;
+        }
+
+        .continue-btn.visible {
+            display: block;
+        }
+
+        @keyframes scan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .glitch {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            color: #0f0;
+            text-transform: uppercase;
+            text-shadow: 2px 2px #f00;
+            animation: glitch 1s infinite;
+        }
+
+        @keyframes glitch {
+            0% { transform: translateX(-50%) skew(0deg); }
+            20% { transform: translateX(-52%) skew(10deg); }
+            40% { transform: translateX(-48%) skew(-10deg); }
+            60% { transform: translateX(-50%) skew(5deg); }
+            80% { transform: translateX(-51%) skew(-5deg); }
+            100% { transform: translateX(-50%) skew(0deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+    <div class="static"></div>
+    
+    <h1 class="glitch">Project Sunfall</h1>
+
+    <div class="video-container">
+        <video id="startVideo">
+            <source src="./START.mp4" type="video/mp4">
+        </video>
+        <div class="controls">
+            <button class="play-btn">▶</button>
+            <div class="progress-container">
+                <div class="progress-bar"></div>
+            </div>
+            <div class="time">00:00</div>
+        </div>
+    </div>
+
+    <button class="continue-btn" onclick="window.location.href='index.html'">Enter the Archive</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const video = document.getElementById('startVideo');
+            const playBtn = document.querySelector('.play-btn');
+            const progressBar = document.querySelector('.progress-bar');
+            const progressContainer = document.querySelector('.progress-container');
+            const timeDisplay = document.querySelector('.time');
+            const continueBtn = document.querySelector('.continue-btn');
+
+            // Play/Pause
+            playBtn.addEventListener('click', () => {
+                if (video.paused) {
+                    video.play();
+                    playBtn.textContent = '⏸';
+                } else {
+                    video.pause();
+                    playBtn.textContent = '▶';
+                }
+            });
+
+            // Progress bar
+            video.addEventListener('timeupdate', () => {
+                const progress = (video.currentTime / video.duration) * 100;
+                progressBar.style.width = `${progress}%`;
+                
+                const minutes = Math.floor(video.currentTime / 60);
+                const seconds = Math.floor(video.currentTime % 60);
+                timeDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            });
+
+            // Click on progress bar
+            progressContainer.addEventListener('click', (e) => {
+                const rect = progressContainer.getBoundingClientRect();
+                const pos = (e.clientX - rect.left) / rect.width;
+                video.currentTime = pos * video.duration;
+            });
+
+            // Show continue button when video ends
+            video.addEventListener('ended', () => {
+                continueBtn.classList.add('visible');
+                playBtn.textContent = '▶';
+            });
+
+            // Add glitch effect on video end
+            video.addEventListener('ended', () => {
+                document.body.style.animation = 'glitch 0.2s infinite';
+                setTimeout(() => {
+                    document.body.style.animation = '';
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+</html> 
